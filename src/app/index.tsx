@@ -1,11 +1,10 @@
-import { Text, View } from "react-native";
-
-export default function Index() {
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import Routes from "../routes/auth.routes";
+export default function app() {
   return (
-    <View>
-      <Text className="text-red-500">
-        Edit app/index.tsx to edit this screen.
-      </Text>
-    </View>
+    <NavigationContainer>
+      <Routes />
+    </NavigationContainer>
   );
 }
