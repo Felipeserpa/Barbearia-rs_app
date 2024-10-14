@@ -11,6 +11,9 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "src/routes/index.js"
+    "src/routes/index.js",
+    "src/app/index.js",
+    "src/pages/Signup/index.js",
+    "src/routes/auth.routes.js"
   ]
 }
