@@ -4,10 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Signin({ navigation }) {
   const [text, onChangeText] = React.useState("Digite seu email");
+  const [password, onChangepassword] = React.useState("*****");
 
   return (
     <View style={styles.container}>
-      <Text style={styles.bancoLogo}>Banco Sujeito</Text>
+      <Text style={styles.bancoLogo}>Barbearia Reserva</Text>
       <View style={styles.areaFormulario}>
         <Text style={styles.textoNome}>Email:</Text>
         <TextInput
@@ -15,10 +16,13 @@ export default function Signin({ navigation }) {
           onChangeText={onChangeText}
           value={text}
         />
-        <Button
-          title="Go to Details"
-          onPress={() => navigation.navigate("Signup")}
+        <Text style={styles.textoNome}>Senha:</Text>
+        <TextInput
+          style={styles.input}
+          onChangepassword={onChangepassword}
+          value={password}
         />
+        <Button title="login" onPress={() => navigation.navigate("Signup")} />
       </View>
     </View>
   );
