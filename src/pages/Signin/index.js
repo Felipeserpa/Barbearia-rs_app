@@ -22,7 +22,7 @@ export default function Signin({ navigation }) {
           onChangepassword={onChangepassword}
           value={password}
         />
-        <Button title="login" onPress={() => navigation.navigate("Signup")} />
+        <Button title="login" onPress={() => navigation.navigate("SignUp")} />
       </View>
     </View>
   );

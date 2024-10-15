@@ -1,16 +1,18 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import Signin from "../pages/Signin"; // Certifique-se de que o caminho está correto
-import Signup from "../pages/Signup"; // Certifique-se de que o caminho está correto
+import { createStackNavigator } from "@react-navigation/stack";
 
-const AuthStack = createNativeStackNavigator();
+import SignUp from "../pages/SignUp";
+import SignIn from "../pages/SignIn";
+
+const AuthStack = createStackNavigator();
 
 function AuthRoutes() {
   return (
     <AuthStack.Navigator>
-      <AuthStack.Screen name="Signin" component={Signin} />
-      <AuthStack.Screen name="Signup" component={Signup} />
+      <AuthStack.Screen name="Login" component={SignIn} />
+      <AuthStack.Screen name="SignUp" component={SignUp} />
+      {/* Outras telas aqui */}
     </AuthStack.Navigator>
   );
 }
