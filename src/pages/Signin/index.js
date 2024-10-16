@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 
 export default function Signin({ navigation }) {
   const [text, onChangeText] = React.useState("Digite seu email");
@@ -8,6 +7,11 @@ export default function Signin({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logo}
+        source={require("../../../assets/images/logo.jpg")}
+      />
+
       <Text style={styles.bancoLogo}>Barbearia Reserva</Text>
       <View style={styles.areaFormulario}>
         <Text style={styles.textoNome}>Email:</Text>
@@ -22,7 +26,12 @@ export default function Signin({ navigation }) {
           onChangepassword={onChangepassword}
           value={password}
         />
-        <Button title="login" onPress={() => navigation.navigate("SignUp")} />
+        <Button
+          title="login"
+          color="#ffa500"
+          style={styles.title}
+          onPress={() => navigation.navigate("SignUp")}
+        />
       </View>
     </View>
   );
@@ -31,11 +40,15 @@ export default function Signin({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#172554",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 20,
+    paddingTop: 0,
   },
+  bancoLogo: {
+    color: "#FFFFFF",
+  },
+
   input: {
     borderWidth: 1,
     borderRadius: 4,
@@ -54,7 +67,16 @@ const styles = StyleSheet.create({
   },
   textoNome: {
     fontSize: 17,
-    color: "#000000",
+    color: "#FFFFFF",
     fontWeight: "bold",
+  },
+  title: {
+    color: "#FFFFFF",
+    Button: "#ffa500",
+  },
+  logo: {
+    width: 150,
+    height: 158,
+    borderRadius: 50,
   },
 });
