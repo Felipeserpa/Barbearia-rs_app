@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 
 export default function Signin({ navigation }) {
   const [text, onChangeText] = React.useState("Digite seu email");
-  const [password, onChangepassword] = React.useState("*****");
+  const [number, onChangeNumber] = React.useState("");
 
   return (
     <View style={styles.container}>
@@ -21,17 +21,24 @@ export default function Signin({ navigation }) {
           value={text}
         />
         <Text style={styles.textoNome}>Senha:</Text>
+
         <TextInput
           style={styles.input}
-          onChangepassword={onChangepassword}
-          value={password}
+          onChangeText={onChangeNumber}
+          value={number}
+          placeholder="Enter your password"
+          keyboardType="numeric"
         />
-        <Button
-          title="login"
-          color="#ffa500"
-          style={styles.title}
+        <Button title="login" color="#ffa500" style={styles.title} />
+      </View>
+      <View style={{ flexDirection: "row", paddingLeft: 2 }}>
+        <Text
+          style={styles.textocadastro}
           onPress={() => navigation.navigate("SignUp")}
-        />
+        >
+          Cadastre-se
+        </Text>
+        <Text style={styles.textoNomes}>Recuperar sua senha</Text>
       </View>
     </View>
   );
@@ -47,6 +54,18 @@ const styles = StyleSheet.create({
   },
   bancoLogo: {
     color: "#FFFFFF",
+  },
+  textocadastro: {
+    paddingTop: 0,
+    fontSize: 13,
+    color: "#FFFFFF",
+    marginHorizontal: 65,
+  },
+  textoNomes: {
+    paddingTop: 0,
+    fontSize: 13,
+    color: "#FFFFFF",
+    marginHorizontal: 65,
   },
 
   input: {
