@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 
 export default function Signin({ navigation }) {
-  const [text, onChangeText] = React.useState("Digite seu email");
+  const [text, onChangeText] = React.useState("");
   const [number, onChangeNumber] = React.useState("");
 
   return (
@@ -19,6 +19,7 @@ export default function Signin({ navigation }) {
           style={styles.input}
           onChangeText={onChangeText}
           value={text}
+          placeholder="Enter your email"
         />
         <Text style={styles.textoNome}>Senha:</Text>
 
