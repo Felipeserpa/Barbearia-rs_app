@@ -10,7 +10,19 @@ const AuthStack = createStackNavigator();
 function AuthRoutes() {
   return (
     <AuthStack.Navigator>
-      <AuthStack.Screen name="Home" component={Home} />
+      <AuthStack.Screen
+        name="     Bem-vindos Reserva_Barbearia"
+        component={Home}
+        options={{
+          headerStyle: {
+            backgroundColor: "#ffa500",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      />
       <AuthStack.Screen
         name="Login"
         component={SignIn}
