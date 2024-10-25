@@ -1,36 +1,52 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Image,
+  ImageBackground,
+} from "react-native";
 
 export default function Home({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={require("../../../assets/images/logo.jpg")}
-      />
+    <ImageBackground
+      source={require("../../../assets/images/bb.png")} // Caminho para a imagem de fundo
+      style={styles.background}
+    >
+      <View style={styles.overlay}>
+        <Image
+          style={styles.logo}
+          source={require("../../../assets/images/logo.jpg")}
+        />
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("SignUp")}
-        >
-          <Text style={styles.buttonText}>Cadastro</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Login")}
+          >
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("SignUp")}
+          >
+            <Text style={styles.buttonText}>Cadastro</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: "#172554",
+    resizeMode: "cover", // Ajusta a imagem para cobrir toda a tela
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(23, 37, 84, 0.2)", // Cor de fundo translúcida para destacar o conteúdo
     alignItems: "center",
     justifyContent: "center",
   },
