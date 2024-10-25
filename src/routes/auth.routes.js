@@ -11,16 +11,10 @@ function AuthRoutes() {
   return (
     <AuthStack.Navigator>
       <AuthStack.Screen
-        name="     Bem-vindos Reserva_Barbearia"
+        name="Bem-vindos Reserva_Barbearia"
         component={Home}
         options={{
-          headerStyle: {
-            backgroundColor: "#ffa500",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
+          headerShown: false,
         }}
       />
       <AuthStack.Screen
