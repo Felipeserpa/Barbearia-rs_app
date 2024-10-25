@@ -1,54 +1,58 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 
 export default function Home({ navigation }) {
   return (
-    <View style={style.container}>
+    <View style={styles.container}>
       <Image
-        style={style.logo}
+        style={styles.logo}
         source={require("../../../assets/images/logo.jpg")}
       />
-      <View style={style.areaFormulario}>
-        <Button
-          style={style.button}
-          title="Login"
-          color="#ffa500"
-          onPress={() => navigation.navigate("Login")}
-        />
 
-        <Button
-          style={style.button}
-          title="Cadastro"
-          color="#ffa500"
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => navigation.navigate("SignUp")}
-        />
+        >
+          <Text style={styles.buttonText}>Cadastro</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#172554",
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 0,
   },
   logo: {
-    width: 150,
-    height: 158,
-    borderRadius: 50,
-  },
-  button: {
-    width: 80,
-    backgroundColor: "#ffa500",
-    borderRadius: 10,
-    paddingVertical: 15,
+    width: "60%",
+    height: 220,
+    borderRadius: 20,
     marginBottom: 20,
   },
-  areaFormulario: {
-    flexDirection: "column",
-    margin: 10,
+  buttonContainer: {
+    width: "60%",
+  },
+  button: {
+    backgroundColor: "#ffa500",
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 10, // Espaço entre os botões
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
