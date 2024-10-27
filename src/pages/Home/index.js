@@ -51,10 +51,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logo: {
-    width: "60%",
+    width: "50%",
     height: 220,
     borderRadius: 20,
     marginBottom: 20,
+    borderRadius: 50,
   },
   buttonContainer: {
     width: "60%",
