@@ -23,9 +23,9 @@ function AuthRoutes() {
         options={{ headerShown: false }}
       />
       <AuthStack.Screen
-        name="Cadastre-se"
+        name="SignUp"
         component={SignUp}
-        options={{ headerShow: false }}
+        options={{ headerShown: false }}
       />
       {/* Outras telas aqui */}
     </AuthStack.Navigator>

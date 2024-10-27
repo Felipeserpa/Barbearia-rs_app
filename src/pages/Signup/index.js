@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
 
 export default function SignUp({ navigation }) {
+  const [nome, Setnome] = React.useState("");
   const [text, onChangeText] = React.useState("");
+
   const [number, onChangeNumber] = React.useState("");
 
   return (
@@ -14,6 +16,14 @@ export default function SignUp({ navigation }) {
 
       <Text style={styles.bancoLogo}>Barbearia Reserva</Text>
       <View style={styles.areaFormulario}>
+        <Text style={styles.textoNome}>Nome:</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={Setnome}
+          value={nome}
+          placeholder="Enter your nome"
+        />
+
         <Text style={styles.textoNome}>Email:</Text>
         <TextInput
           style={styles.input}
@@ -28,9 +38,8 @@ export default function SignUp({ navigation }) {
           onChangeText={onChangeNumber}
           value={number}
           placeholder="Enter your password"
-          keyboardType="numeric"
         />
-        <Button title="login" color="#ffa500" style={styles.title} />
+        <Button title="Cadastre-se" color="#ffa500" style={styles.title} />
       </View>
       <View style={{ flexDirection: "row", paddingLeft: 2 }}>
         <Text

@@ -28,7 +28,6 @@ export default function Signin({ navigation }) {
           onChangeText={onChangeNumber}
           value={number}
           placeholder="Enter your password"
-          keyboardType="numeric"
         />
         <Button title="login" color="#ffa500" style={styles.title} />
       </View>

@@ -6,8 +6,8 @@ import Routes from "../routes/index";
 function App() {
   return (
     <NavigationContainer independent={true}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffa500" />
       <Routes />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffa500" />
     </NavigationContainer>
   );
 }
