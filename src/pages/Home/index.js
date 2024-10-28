@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   ImageBackground,
+  SafeAreaView,
 } from "react-native";
 
 export default function Home({ navigation }) {

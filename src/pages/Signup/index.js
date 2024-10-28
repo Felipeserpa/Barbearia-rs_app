@@ -1,5 +1,9 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, TextInput, Image } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function SignUp({ navigation }) {
   const [nome, Setnome] = React.useState("");
@@ -69,13 +73,15 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     fontSize: 13,
     color: "#FFFFFF",
-    marginHorizontal: 65,
+    marginHorizontal: 0,
   },
   textoNomes: {
     paddingTop: 0,
     fontSize: 13,
     color: "#FFFFFF",
-    marginHorizontal: 65,
+    marginHorizontal: "0%",
+    width: wp("70%"),
+    paddingLeft: "45%",
   },
 
   input: {
@@ -88,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 5,
     marginTop: 5,
-    width: 350,
+    width: wp("92%"),
   },
   areaFormulario: {
     flexDirection: "column",
