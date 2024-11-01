@@ -3,9 +3,7 @@ import { View, ActivityIndicator } from "react-native";
 import AuthRouter from "./auth.routes";
 import { createSwitchNavigator } from "@react-navigation/native";
 
-import { AppStack } from "./app";
-
-import AppStack from "./routes/appStack";
+import AppRoutes from "./app.routes";
 
 function Routes() {
   const loading = false; // Replace with your actual loading state logic
@@ -16,20 +14,9 @@ function Routes() {
       <ActivityIndicator size="large" />
     </View>
   ) : signed ? (
-    <AppStack />
+    <AppRoutes />
   ) : (
     <AuthRouter />
-  );
-
-  const RootStack = createSwitchNavigator(
-    {
-      AuthLoading: AuthLoadingScreen, // Tela para lidar com o carregamento inicial do aplicativo
-      App: AppStack,
-      Auth: AuthStack,
-    },
-    {
-      initialRouteName: "AuthLoading",
-    }
   );
 }
 
