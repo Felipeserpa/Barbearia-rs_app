@@ -33,7 +33,12 @@ export default function Signin({ navigation }) {
           value={number}
           placeholder="Enter your password"
         />
-        <Button title="login" color="#ffa500" style={styles.title} />
+        <Button
+          title="login"
+          color="#ffa500"
+          style={styles.title}
+          onPress={() => navigation.navigate("HomeScreen")}
+        />
       </View>
       <View style={{ flexDirection: "row", paddingLeft: 2 }}>
         <Text
