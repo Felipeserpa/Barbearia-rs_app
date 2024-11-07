@@ -1,11 +1,9 @@
-import * as React from "react";
-import { View, Text, Platform } from "react-native";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import Geolocation from "react-native-geolocation-service";
-import { PermissionsAndroid } from "react-native";
+import * as Location from "expo-location";
 
-export default function Sobre({ navigation }) {
+export default function Sobre() {
   const [region, setRegion] = useState({
     latitude: -8.123456,
     longitude: -35.123456,
@@ -13,67 +11,33 @@ export default function Sobre({ navigation }) {
     longitudeDelta: 0.0421,
   });
 
-  // Request location permission
   const requestLocationPermission = async () => {
-    if (Platform.OS === "android") {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: "Location Permission",
-            message: "App needs access to your location",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-          }
-        );
-
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          getCurrentLocation(); // Call function to fetch location
-        } else {
-          console.log("Location permission denied");
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    } else if (Platform.OS === "ios") {
-      // Handle iOS permissions using another method (e.g., react-native-permissions)
-    }
-  };
-
-  // Function to get the current location using geolocation
-  const getCurrentLocation = () => {
-    if (Geolocation) {
-      Geolocation.getCurrentPosition(
-        (position) => {
-          setRegion({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
-        },
-        (error) => {
-          console.error("Geolocation Error: ", error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 10000,
-        }
-      );
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      getCurrentLocation();
     } else {
-      console.error("Geolocation is not available");
+      console.log("Permissão de localização negada");
     }
   };
 
-  // useEffect to request permission when component mounts
+  const getCurrentLocation = async () => {
+    try {
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    } catch (error) {
+      console.error("Erro ao obter localização:", error);
+    }
+  };
+
   useEffect(() => {
-    if (Geolocation) {
-      requestLocationPermission();
-    } else {
-      console.error("Geolocation service not available");
-    }
+    requestLocationPermission(); // Solicita permissão ao carregar o componente
   }, []);
 
   return (
@@ -82,7 +46,7 @@ export default function Sobre({ navigation }) {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 9,
+        padding: 10,
       }}
     >
       <Text style={{ fontSize: 20, marginBottom: 20 }}>Barbearia Reserva</Text>
@@ -106,9 +70,18 @@ export default function Sobre({ navigation }) {
         para você. Estamos ansiosos para recebê-lo!
       </Text>
 
-      <MapView style={{ flex: 1, width: "100%" }} initialRegion={region}>
-        <Marker coordinate={region} title="Barbearia Reserva São Lourenço" />
-      </MapView>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 10,
+        }}
+      >
+        <MapView initialRegion={region}>
+          <Marker coordinate={region} title="Barbearia Reserva São Lourenço" />
+        </MapView>
+      </View>
     </View>
   );
 }
