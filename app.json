@@ -14,11 +14,13 @@
     },
     "ios": {
       "supportsTablet": true,
+      "newArchEnabled": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Precisamos acessar sua localização para mostrar sua posição no mapa."
       }
     },
     "android": {
+      "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
