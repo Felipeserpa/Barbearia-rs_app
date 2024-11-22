@@ -7,7 +7,7 @@ import AppRoutes from "./app.routes";
 
 function Routes() {
   const loading = false; // Replace with your actual loading state logic
-  const signed = false;
+  const signed = true;
 
   return loading ? (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
