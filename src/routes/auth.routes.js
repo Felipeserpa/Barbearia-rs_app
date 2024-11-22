@@ -3,7 +3,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import SignUp from "../pages/Signup";
-import SignIn from "../pages/Signin";
+import SignIn from "../pages/SignIn";
 import Home from "../pages/Home";
 const AuthStack = createStackNavigator();
 

@@ -45,12 +45,12 @@ export default function SignUp({ navigation }) {
         />
         <Button title="Cadastre-se" color="#ffa500" style={styles.title} />
       </View>
-      <View style={{ flexDirection: "row", paddingLeft: 2 }}>
+      <View style={{ flexDirection: "row", paddingLeft: 1 }}>
         <Text
           style={styles.textocadastro}
-          onPress={() => navigation.navigate("SignUp")}
+          onPress={() => navigation.navigate("Login")}
         >
-          Cadastre-se
+          Login
         </Text>
         <Text style={styles.textoNomes}>Recuperar sua senha</Text>
       </View>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   textocadastro: {
     paddingTop: 0,
-    fontSize: 13,
+    fontSize: 15,
     color: "#FFFFFF",
     marginHorizontal: 0,
   },
