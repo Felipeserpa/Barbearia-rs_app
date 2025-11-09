@@ -12,10 +12,11 @@ const AppDrawer = createDrawerNavigator();
 export default function AppRoutes() {
   return (
     <AppDrawer.Navigator>
-      <AppDrawer.Screen name="Agenda" component={Home} />
-      <AppDrawer.Screen name="Perfil" component={Perfil} />
-      <AppDrawer.Screen name="Loja" component={Produtos} />
       <AppDrawer.Screen name="Serviços" component={Servicos} />
+      <AppDrawer.Screen name="Agendamentos" component={Home} />
+      <AppDrawer.Screen name="Cadastro Produto" component={Perfil} />
+      <AppDrawer.Screen name="Loja" component={Produtos} />
+
       <AppDrawer.Screen name="Sobre" component={Sobre} />
     </AppDrawer.Navigator>
   );

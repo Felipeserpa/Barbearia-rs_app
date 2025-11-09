@@ -35,6 +35,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    margin: 10,
+    gap: 30,
   }, // Adjust spacing as needed
   image: {
     width: 150,
