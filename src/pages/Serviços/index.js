@@ -12,74 +12,113 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  where,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+// 🚨 AJUSTE O CAMINHO PARA O SEU ARQUIVO firebaseConfig
+import { db } from "../../../firebaseconfig";
+
+// ID FIXO para filtrar os serviços desta barbearia
+const SHOP_ID_TESTE = "BarbeChatbotTeste123";
+
 export default function Servicos() {
   const [nome, setNome] = React.useState("");
   const [preco, setPreco] = React.useState("");
   const [duracao, setDuracao] = React.useState("");
-  const [data, setData] = React.useState("");
-  const [hora, setHora] = React.useState("");
   const [servicos, setServicos] = React.useState([]);
+  const [carregando, setCarregando] = React.useState(true); // ⬅️ Adicionado o estado de carregamento
   const [numeroWhatsApp, setNumeroWhatsApp] = React.useState("");
   const [linkGerado, setLinkGerado] = React.useState("");
 
-  // Adiciona um novo serviço
-  function handleAdicionarServico() {
-    if (!nome.trim()) {
-      Alert.alert("Atenção", "Preencha o nome do serviço.");
-      return;
-    }
+  // ➡️ CARREGAR SERVIÇOS DO FIRESTORE EM TEMPO REAL
+  React.useEffect(() => {
+    const servicosRef = collection(db, "servicos");
 
-    const novo = {
-      id: Date.now().toString(),
-      nome,
-      preco,
-      duracao,
-      horarios:
-        data && hora ? [{ id: Math.random().toString(), data, hora }] : [],
-    };
+    // Consulta: Filtra pelo ShopId e ordena pela data de criação
+    const q = query(servicosRef, where("shopId", "==", SHOP_ID_TESTE));
 
-    setServicos((prev) => [novo, ...prev]);
-    limparCampos();
-  }
+    // onSnapshot cria um ouvinte em tempo real
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const servicosCarregados = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // Converte de volta para string para TextInputs
+            preco: data.preco ? String(data.preco) : "",
+            duracao: data.duracao ? String(data.duracao) : "",
+          };
+        });
 
-  function limparCampos() {
-    setNome("");
-    setPreco("");
-    setDuracao("");
-    setData("");
-    setHora("");
-  }
-
-  function handleExcluir(id) {
-    setServicos((prev) => prev.filter((s) => s.id !== id));
-  }
-
-  function handleAdicionarHorario(servicoId) {
-    if (!data.trim() || !hora.trim()) {
-      Alert.alert("Preencha a data e hora.");
-      return;
-    }
-
-    setServicos((prev) =>
-      prev.map((s) =>
-        s.id === servicoId
-          ? {
-              ...s,
-              horarios: [
-                ...s.horarios,
-                { id: Math.random().toString(), data, hora },
-              ],
-            }
-          : s
-      )
+        setServicos(servicosCarregados);
+        setCarregando(false);
+      },
+      (error) => {
+        console.error("Erro ao carregar serviços: ", error);
+        setCarregando(false);
+        Alert.alert("Erro", "Falha ao carregar serviços do banco de dados.");
+      }
     );
 
-    setData("");
-    setHora("");
+    // Função de limpeza: interrompe a escuta
+    return () => unsubscribe();
+  }, []);
+
+  // Adiciona um novo serviço ao Firestore
+  async function handleAdicionarServico() {
+    if (!nome.trim() || preco.trim() === "" || duracao.trim() === "") {
+      Alert.alert("Atenção", "Preencha o nome, preço e duração do serviço.");
+      return;
+    }
+
+    try {
+      const novoServico = {
+        nome: nome.trim(),
+        preco: parseFloat(preco), // Salvar como NÚMERO
+        duracao: parseInt(duracao), // Salvar como NÚMERO
+        // Horários são gerenciados pelo chatbot
+        shopId: SHOP_ID_TESTE,
+        createdAt: new Date(),
+      };
+
+      await addDoc(collection(db, "servicos"), novoServico);
+
+      Alert.alert("Sucesso", "Serviço adicionado ao Firebase!");
+      setNome("");
+      setPreco("");
+      setDuracao("");
+    } catch (error) {
+      console.error("Erro ao salvar no Firestore:", error);
+      Alert.alert(
+        "Erro",
+        "Não foi possível salvar o serviço. Verifique sua conexão."
+      );
+    }
   }
 
-  // Gerar link do WhatsApp com os serviços cadastrados
-  // Gerar link do WhatsApp para INICIAR o Chatbot
+  // Exclui um serviço do Firestore
+  async function handleExcluir(id) {
+    try {
+      await deleteDoc(doc(db, "servicos", id));
+      Alert.alert("Sucesso", "Serviço excluído do Firebase!");
+    } catch (error) {
+      console.error("Erro ao excluir: ", error);
+      Alert.alert(
+        "Erro",
+        "Não foi possível excluir o serviço. Tente novamente."
+      );
+    }
+  }
+
+  // Função para gerar o link do chatbot (esta função está correta)
   function handleGerarLink() {
     if (!numeroWhatsApp.trim()) {
       Alert.alert(
@@ -89,24 +128,14 @@ export default function Servicos() {
       return;
     }
 
-    // REMOVEMOS A VERIFICAÇÃO DE servicos.length > 0, pois o chatbot funcionará mesmo sem serviços cadastrados AQUI.
-    // O chatbot fará a consulta dos serviços no Firebase.
-
-    // A mensagem agora é uma PALAVRA-CHAVE simples para iniciar o fluxo no chatbot/Twilio
     const PALAVRA_CHAVE_INICIO = "INICIAR AGENDAMENTO";
     const mensagem = encodeURIComponent(PALAVRA_CHAVE_INICIO);
 
-    // Formata o número (garantindo que o 55 + DDD esteja presente)
-    // Se o usuário digitar (81) 99999-9999, o regex remove tudo e fica 81999999999
     const numeroFormatado = numeroWhatsApp.replace(/\D/g, "");
-
-    // VERIFICAÇÃO CRÍTICA: Se o usuário não incluiu o 55, o código DEVE adicioná-lo.
-    // Assumimos que o número inserido é do Brasil (81...)
     const numeroCompleto = numeroFormatado.startsWith("55")
       ? numeroFormatado
       : "55" + numeroFormatado;
 
-    // Constrói o novo link do Chatbot
     const link = `https://wa.me/${numeroCompleto}?text=${mensagem}`;
     setLinkGerado(link);
     Alert.alert(
@@ -144,7 +173,7 @@ export default function Servicos() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Preço (ex: 50,00)"
+        placeholder="Preço (ex: 50)"
         value={preco}
         onChangeText={setPreco}
         keyboardType="numeric"
@@ -154,22 +183,8 @@ export default function Servicos() {
         placeholder="Duração (min)"
         value={duracao}
         onChangeText={setDuracao}
+        keyboardType="numeric"
       />
-
-      <View style={{ flexDirection: "row" }}>
-        <TextInput
-          style={[styles.input, { flex: 1 }]}
-          placeholder="Data (ex: 12/11/2025)"
-          value={data}
-          onChangeText={setData}
-        />
-        <TextInput
-          style={[styles.input, { width: 100, marginLeft: 8 }]}
-          placeholder="Hora (ex: 14:00)"
-          value={hora}
-          onChangeText={setHora}
-        />
-      </View>
 
       <TouchableOpacity style={styles.botao} onPress={handleAdicionarServico}>
         <Text style={styles.textoBotao}>Adicionar Serviço</Text>
@@ -177,7 +192,9 @@ export default function Servicos() {
 
       <Text style={styles.subtitulo}>Serviços cadastrados</Text>
 
-      {servicos.length === 0 ? (
+      {carregando ? (
+        <Text style={styles.msgVazio}>Carregando serviços...</Text>
+      ) : servicos.length === 0 ? (
         <Text style={styles.msgVazio}>Nenhum serviço ainda.</Text>
       ) : (
         <FlatList
@@ -191,21 +208,7 @@ export default function Servicos() {
                   {item.preco ? `R$ ${item.preco}` : ""}{" "}
                   {item.duracao ? `• ${item.duracao} min` : ""}
                 </Text>
-
-                <Text style={{ marginTop: 8, fontWeight: "700" }}>
-                  Horários disponíveis:
-                </Text>
-                {item.horarios.length === 0 ? (
-                  <Text style={{ color: "#777" }}>
-                    Nenhum horário cadastrado
-                  </Text>
-                ) : (
-                  item.horarios.map((h) => (
-                    <Text key={h.id}>
-                      • {h.data} — {h.hora}
-                    </Text>
-                  ))
-                )}
+                {/* 🚨 Removida a lógica de exibição de horários */}
               </View>
 
               <TouchableOpacity
@@ -237,7 +240,6 @@ export default function Servicos() {
         {linkGerado ? (
           <View style={styles.resultado}>
             <Text style={styles.link}>{linkGerado}</Text>
-
             <View style={styles.row}>
               <TouchableOpacity
                 style={[styles.btnAcao, { backgroundColor: "#2196F3" }]}
@@ -245,7 +247,6 @@ export default function Servicos() {
               >
                 <Text style={styles.textoBotao}>Copiar Link</Text>
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={[styles.btnAcao, { backgroundColor: "#25D366" }]}
                 onPress={handleAbrirWhatsApp}
