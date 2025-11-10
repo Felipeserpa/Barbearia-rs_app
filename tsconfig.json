@@ -14,7 +14,7 @@
     "src/routes/index.js",
     "src/app/index.js",
     "src/pages/SignUp/index.js",
-    "src/routes/auth.routes.js"
+    "src/routes/auth.routes.js",
+    "src/componentes/geraLink/GerarLink.js"
   ]
 }
-

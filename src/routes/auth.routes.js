@@ -1,11 +1,14 @@
 import React from "react";
 
-import { createStackNavigator } from "@react-navigation/stack";
+// MUDANÇA AQUI: Usar createNativeStackNavigator
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import SignUp from "../pages/Signup";
 import SignIn from "../pages/SignIn";
 import Home from "../pages/Home";
-const AuthStack = createStackNavigator();
+
+// MUDANÇA AQUI: Chamar createNativeStackNavigator()
+const AuthStack = createNativeStackNavigator();
 
 function AuthRoutes() {
   return (

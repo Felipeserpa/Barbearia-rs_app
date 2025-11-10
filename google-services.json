@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "51035787161",
+    "project_id": "barbechatbot",
+    "storage_bucket": "barbechatbot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:51035787161:android:0e6be1f210f470ec3c8d08",
+        "android_client_info": {
+          "package_name": "com.inbarber.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAskqsAtkWirGHNrr9p6R1p4C1ExkFiAfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
