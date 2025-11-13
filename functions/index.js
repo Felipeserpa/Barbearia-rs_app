@@ -1,74 +1,106 @@
-// functions/index.js
-
+// 1. IMPORTS NECESSÁRIOS
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const twilio = require("twilio");
-const MessagingResponse = twilio.twiml.MessagingResponse;
+const twilio = require("twilio"); // ⬅️ Biblioteca para gerar TwiML
 
-// 1. Inicializa o Admin SDK e o Banco de Dados (Firestore)
-// O admin.initializeApp() lê as credenciais do ambiente do Firebase Cloud.
+// 🚨 Inicialize o Admin SDK (necessário para Firestore)
 admin.initializeApp();
 const db = admin.firestore();
 
-// 2. Carrega as configurações seguras da Twilio
-const config = functions.config().twilio;
+// 🚨 Configure a Twilio (Você deve configurar essas variáveis no Firebase Functions Environment Variables)
+// Por enquanto, vamos hardcodar (colocar o valor fixo) para simplificar
+const accountSid = functions.config().twilio.sid || "YOUR_TWILIO_ACCOUNT_SID";
+const authToken = functions.config().twilio.token || "YOUR_TWILIO_AUTH_TOKEN";
 
-// 3. Endpoint principal (Webhook da Twilio)
+// Use as credenciais da Twilio para criar o objeto de mensageria (não usado aqui, mas útil)
+// const client = new twilio(accountSid, authToken);
+
+// Use TwiML para criar o objeto de resposta
+const MessagingResponse = twilio.twiml.MessagingResponse;
+
+// 🚨 DEFINIÇÃO DO ID DA BARBEARIA E HORÁRIO FIXO
+const SHOP_ID = "BarbeChatbotTeste123";
+const HORARIO_FUNCIONAMENTO = {
+  dias_semana: [1, 2, 3, 4, 5], // 1=Segunda a 5=Sexta
+  inicio_dia: "09:00",
+  fim_dia: "19:00",
+  intervalo_minutos: 60, // Slot de 60 minutos
+};
+
+// ----------------------------------------------------------------------
+// 🚨 LÓGICA PRINCIPAL: O WEBHOOK QUE A TWILIO CHAMA
+// ----------------------------------------------------------------------
+
 exports.webhook = functions.https.onRequest(async (req, res) => {
-  // Twilio envia os dados no corpo (body) da requisição
-  const incomingMessage = req.body.Body
-    ? req.body.Body.trim().toLowerCase()
-    : "";
-  // const senderId = req.body.From; // Número do cliente
-
+  // 1. Instanciar a resposta Twilio
   const twiml = new MessagingResponse();
-  let responseText = "";
 
-  // --- A LÓGICA DE AGENDAMENTO COMEÇA AQUI ---
+  // 2. Obter a mensagem do usuário (do corpo da requisição POST do Twilio)
+  const userMessage = req.body.Body ? req.body.Body.trim().toUpperCase() : "";
+  const userNumber = req.body.From; // Número do cliente
 
-  // A palavra-chave que seu app RN envia (ou uma saudação inicial)
-  if (
-    incomingMessage === "iniciar agendamento" ||
-    incomingMessage === "1" ||
-    incomingMessage === "oi"
-  ) {
-    // Consulta todos os serviços cadastrados no Firestore pelo seu app RN
-    const servicesSnapshot = await db.collection("servicos").get();
+  functions.logger.info(`Mensagem recebida de ${userNumber}: ${userMessage}`);
 
-    if (servicesSnapshot.empty) {
-      responseText =
-        "Desculpe, a barbearia ainda não tem serviços cadastrados. Por favor, volte mais tarde.";
+  try {
+    // 3. LÓGICA DE INÍCIO DE CONVERSA
+    if (userMessage === "INICIAR AGENDAMENTO" || userMessage === "OI") {
+      // A. Buscar serviços no Firestore
+      const servicesSnapshot = await db
+        .collection("servicos")
+        .where("shopId", "==", SHOP_ID)
+        .orderBy("nome")
+        .get();
+
+      if (servicesSnapshot.empty) {
+        twiml.message(
+          "Desculpe, não há serviços cadastrados. Tente mais tarde."
+        );
+      } else {
+        // B. Formatar a lista de serviços
+        let message =
+          "💈 Bem-vindo ao BarbeChatbot! 💈\n\nEscolha o serviço desejado, respondendo com o número:\n";
+
+        servicesSnapshot.docs.forEach((doc, index) => {
+          const service = doc.data();
+          const preco = service.preco.toFixed(2).replace(".", ","); // Formata R$
+          message += `${index + 1}. ${service.nome} (R$ ${preco})\n`;
+        });
+
+        // C. Armazenar o estado da conversa (Aqui você precisaria salvar em uma coleção 'conversas')
+        // ... (Lógica para salvar o estado: ESPERANDO_ESCOLHA_SERVICO)
+
+        twiml.message(message);
+      }
+    } else if (userMessage === "AJUDA") {
+      twiml.message('Para iniciar um agendamento, envie "INICIAR AGENDAMENTO"');
     } else {
-      responseText =
-        "Bem-vindo(a) ao BarbeChatbot! 💈\nEscolha o serviço que você deseja agendar (responda com o *número*):\n\n";
+      // 4. Se o usuário estiver no meio do fluxo (EXEMPLO SIMPLIFICADO)
+      // Aqui você deve ter a lógica para verificar o estado da conversa no Firestore.
 
-      servicesSnapshot.docs.forEach((doc, index) => {
-        const servico = doc.data();
-        // A estrutura aqui depende do que você salvou no Firestore
-        responseText += `${index + 1}. ${servico.nome} - R$ ${servico.preco}\n`;
-      });
-      responseText += "\n\nResponda com o número do serviço desejado.";
-
-      // IMPORTANTE: Em um chatbot real, você salvaria o estado ('esperando_servico')
-      // para saber o que esperar na próxima mensagem do cliente.
+      // Lógica Padrão de Resposta
+      twiml.message(
+        `Sua mensagem: "${userMessage}" foi recebida. Por favor, envie "INICIAR AGENDAMENTO" para ver os serviços.`
+      );
     }
-  }
-  // Futura Lógica: O cliente responde '1' (Corte de cabelo)
-  else if (!isNaN(parseInt(incomingMessage))) {
-    // Lógica de manipulação de número:
-    // Aqui você buscaria os horários disponíveis para o serviço escolhido
-
-    // Simulação de resposta:
-    responseText = `Você escolheu a opção ${incomingMessage}. Agora, digite *ver horários* para ver as vagas disponíveis.`;
-  } else {
-    responseText =
-      "Por favor, digite *oi* ou *iniciar agendamento* para ver o menu principal.";
+  } catch (error) {
+    functions.logger.error("Erro no Webhook:", error);
+    twiml.message("Houve um erro no sistema. Tente novamente mais tarde.");
   }
 
-  // --- FIM DA LÓGICA DO CHATBOT ---
-
-  // 4. Envia a resposta de volta para a Twilio
-  twiml.message(responseText);
-  res.writeHead(200, { "Content-Type": "text/xml" });
-  res.end(twiml.toString());
+  // 5. Enviar a resposta TwiML de volta para a Twilio
+  res.set("Content-Type", "text/xml").status(200).send(twiml.toString());
 });
+
+// ----------------------------------------------------------------------
+// FUNÇÕES UTILITÁRIAS (CALCULO DE SLOTS)
+// ----------------------------------------------------------------------
+
+// ... (Mantenha as funções 'gerarSlotsDeHorario' e 'getAvailableSlots' que forneci anteriormente)
+
+/*
+function gerarSlotsDeHorario(...) { ... }
+exports.getAvailableSlots = functions.https.onCall(...) { ... }
+*/
+
+// IMPORTANTE: Adicione as funções 'gerarSlotsDeHorario' e 'getAvailableSlots'
+// do código anterior no final deste arquivo!
