@@ -9,14 +9,13 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "18" 
-   
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
     "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.5.0",
-    "twilio": "^4.19.0"  
+    "twilio": "^4.19.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0"
